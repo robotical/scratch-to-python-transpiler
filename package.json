@@ -2,7 +2,7 @@
 
   "name": "@robotical/scratch-to-python-transpiler",
 
-  "version": "1.0.2",
+  "version": "1.0.3",
 
   "description": "Transpile Scratch project files to python code",
 
@@ -21,7 +21,9 @@
     "lint": "eslint \"src/**/*.ts\"",
 
     "test": "jest --config jestconfig.json",
+
     "prepare": "npm run build"
+
   },
 
   "files": [
