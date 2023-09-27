@@ -1,36 +1,12 @@
 {
-    "compilerOptions": {
-      "target": "es2017",
-      "module": "es6",
-      "moduleResolution": "node",
-      "declaration": true,
-      "strict": true,
-      "strictNullChecks": true /* Enable strict null checks. */,
-      "strictFunctionTypes": true /* Enable strict checking of function types. */,
-      "noUnusedLocals": true /* Report errors on unused locals. */,
-      "noUnusedParameters": true /* Report errors on unused parameters. */,
-      "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
-      "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
-      "importHelpers": true,
-      "skipLibCheck": true,
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true,
-      "sourceMap": false,
-      "outDir": "./dist/",
-      "lib": [
-        "es6",
-        "dom"
-      ]
-    },
-    "include": [
-      "src/**/*.ts",
-      "__tests__/main.test.ts"  
-    ],
-    "exclude": [
-      "node_modules",
-      "**/*.test.ts",
-      "./dist"
-    ]
-  }
-  
+  "compilerOptions": {
+    "lib": ["es2019", "dom"],
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/*.test.ts"]
+}

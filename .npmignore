@@ -1,0 +1,19 @@
+# Ignore source files
+src
+lib
+
+# Ignore TypeScript configuration
+tsconfig.json
+
+# Ignore environment configuration files
+.env
+.env.local
+.env.development
+.env.development.local
+.env.production
+.env.production.local
+
+# Ignore development tools configuration files
+.prettierrc
+.eslintrc.json
+.editorconfig
