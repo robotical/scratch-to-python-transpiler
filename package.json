@@ -1,5 +1,5 @@
 {
-  "name": "scratch-to-python-transpiler",
+  "name": "@robotical/scratch-to-python-transpiler",
   "version": "1.0.0",
   "description": "Transpile Scratch project files to python code",
   "main": "lib/index.js",
