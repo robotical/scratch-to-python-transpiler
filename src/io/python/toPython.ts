@@ -1739,8 +1739,16 @@ export default function toPython(
           blockSource = `martypy.circle_dance("${mv2_circle_side}", ${mv2_circle_moveTimeMs})`;
           break;
         case OpCode.mv2_eyes:
-          const mv2_eyes_side = inputToPython(block.inputs.COMMAND, InputShape.Any);
-          blockSource = `martypy.eyes(${mv2_eyes_side})`;
+          const mv2_eyes = inputToPython(block.inputs.COMMAND, InputShape.Any);
+          // pose must be one of {'angry', 'wide', 'excited', 'wiggle', 'normal'},
+          const eyesMartyPyMap = {
+            '"eyesExcited"': '"excited"',
+            '"eyesWide"': '"wide"',
+            '"eyesAngry"': '"angry"',
+            '"wiggleEyes"': '"wiggle"',
+            '"eyesNormal"': '"normal"',
+          };
+          blockSource = `martypy.eyes(${eyesMartyPyMap[mv2_eyes]})`;
           break;
         case OpCode.mv2_kick:
           const mv2_kick_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
@@ -1751,23 +1759,23 @@ export default function toPython(
           blockSource = `martypy.hold_position(${mv2_hold_moveTimeMs})`;
           break;
         case OpCode.mv2_lean:
-          const mv2_lean_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
+          const mv2_lean_side = ["left", "right", "forward", "back"][inputToPython(block.inputs.SIDE, InputShape.Any)];
           const mv2_lean_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.lean("${mv2_lean_side}", ${mv2_lean_moveTimeMs})`;
+          blockSource = `martypy.lean(direction="${mv2_lean_side}", move_time=${mv2_lean_moveTimeMs})`;
           break;
         case OpCode.mv2_liftFoot:
           const mv2_lift_foot_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.lift_foot("${mv2_lift_foot_side}") # not implemented in python`;
+          blockSource = `martypy.lift_foot("${mv2_lift_foot_side}")`;
           break;
         case OpCode.mv2_lowerFoot:
           const mv2_lower_foot_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.lower_foot("${mv2_lower_foot_side}") # not implemented in python`;
+          blockSource = `martypy.lower_foot("${mv2_lower_foot_side}")`;
           break;
         case OpCode.mv2_moveJoint:
-          const mv2_moveJoint_joint_id = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_moveJoint_joint_id = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
           const mv2_moveJoint_angle = inputToPython(block.inputs.ANGLE, InputShape.Number);
           const mv2_moveJoint_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.move_joint(${mv2_moveJoint_joint_id}, ${mv2_moveJoint_angle}, ${mv2_moveJoint_moveTimeMs})`;
+          blockSource = `martypy.move_joint(joint_name_or_num="${mv2_moveJoint_joint_id}", position=${mv2_moveJoint_angle}, move_time=${mv2_moveJoint_moveTimeMs})`;
           break;
         case OpCode.mv2_slide:
           const mv2_slide_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
@@ -1813,16 +1821,16 @@ export default function toPython(
           break;
         case OpCode.mv2_wave:
           const mv2_wave_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.wave("${mv2_wave_side}") # not implemented in python`;
+          blockSource = `martypy.wave("${mv2_wave_side}")`;
           break;
         case OpCode.mv2_gripperArmBasic:
-          const mv2_gripperArmBasic_hand_position = ["left", "right"][
+          const mv2_gripperArmBasic_hand_position = ["open", "close"][
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
           blockSource = `martypy.gripper("${mv2_gripperArmBasic_hand_position}") # not implemented in python`;
           break;
         case OpCode.mv2_gripperArmTimed:
-          const mv2_gripperArmTimed_hand_position = ["left", "right"][
+          const mv2_gripperArmTimed_hand_position = ["open", "close"][
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
           const mv2_gripperArmTimed_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
@@ -1835,53 +1843,69 @@ export default function toPython(
         case OpCode.mv2_discoChangeBlockPattern:
           const mv2_discoChangeBlockPattern_pattern = inputToPython(block.inputs.PATTERN, InputShape.Any);
           const mv2_discoChangeBlockPattern_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
-          blockSource = `martypy.disco_pattern2(${mv2_discoChangeBlockPattern_board}, ${mv2_discoChangeBlockPattern_pattern}) # not implemented in python`;
+          blockSource = `martypy.disco_named_pattern(add_on=${mv2_discoChangeBlockPattern_board}, pattern=${mv2_discoChangeBlockPattern_pattern})`;
           break;
         case OpCode.mv2_LEDEyesColour:
           const mv2_LEDEyesColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_LEDEyesColour_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
-          blockSource = `martypy.disco_colour(${mv2_LEDEyesColour_board}, ${mv2_LEDEyesColour_colour}) # not implemented in python`;
+          const mv2_LEDEyesColour_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_colour);
+          blockSource = `martypy.disco_color(color=${mv2_LEDEyesColour_colour_final}, add_on=${mv2_LEDEyesColour_board}, api='led')`;
           break;
         case OpCode.mv2_LEDEyesColour_SpecificLED:
           const mv2_LEDEyesColour_SpecificLED_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_led_position = inputToPython(block.inputs.LED_POSITION, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
-          blockSource = `martypy.disco_colour_specific_led(${mv2_LEDEyesColour_SpecificLED_board}, ${mv2_LEDEyesColour_SpecificLED_led_position}, ${mv2_LEDEyesColour_SpecificLED_colour}) # not implemented in python`;
+          const mv2_LEDEyesColour_SpecificLED_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_SpecificLED_colour)
+          blockSource = `martypy.disco_color_specific_led(color=${mv2_LEDEyesColour_SpecificLED_colour_final}, add_on=${mv2_LEDEyesColour_SpecificLED_board}, led_id=${mv2_LEDEyesColour_SpecificLED_led_position})`;
           break;
         case OpCode.mv2_LEDEyesColourLEDs:
           const mv2_LEDEyesColourLEDs_colour = inputToPython(block.inputs.COLOUR, InputShape.Any);
-          const mv2_LEDEyesColourLEDs_side = inputToPython(block.inputs.SIDE, InputShape.Any);
-          blockSource = `martypy.disco_colour_eyepicker(${mv2_LEDEyesColourLEDs_colour}, ${mv2_LEDEyesColourLEDs_side}) # not implemented in python`;
+          const mv2_LEDEyesColourLEDs_board = inputToPython(block.inputs.SIDE, InputShape.Any);
+          let mv2_LEDEyesColourLEDs_colour_corrected;
+          try {
+            const parsedColours = JSON.parse(mv2_LEDEyesColourLEDs_colour);
+            mv2_LEDEyesColourLEDs_colour_corrected = parsedColours.map((c: string) => {
+              if (c === "#5ba591") return "#000000";
+              return c;
+            })
+            mv2_LEDEyesColourLEDs_colour_corrected = JSON.stringify(mv2_LEDEyesColourLEDs_colour_corrected);
+          } catch {
+            mv2_LEDEyesColourLEDs_colour_corrected = mv2_LEDEyesColourLEDs_colour === "#5ba591" ? '"#000000"' : mv2_LEDEyesColourLEDs_colour;
+          }
+          blockSource = `martypy.disco_color_eyepicker(colours=${mv2_LEDEyesColourLEDs_colour_corrected}, add_on=${mv2_LEDEyesColourLEDs_board})`;
           break;
         case OpCode.mv2_RGBOperator:
           const mv2_RGBOperator_NUM_R = inputToPython(block.inputs.NUM_R, InputShape.Any);
           const mv2_RGBOperator_NUM_B = inputToPython(block.inputs.NUM_B, InputShape.Any);
           const mv2_RGBOperator_NUM_G = inputToPython(block.inputs.NUM_G, InputShape.Any);
-          blockSource = `martypy.rgb_operator(${mv2_RGBOperator_NUM_R}, ${mv2_RGBOperator_NUM_B}, ${mv2_RGBOperator_NUM_G}) # not implemented in python`;
+          blockSource = `martypy.rgb_operator(${mv2_RGBOperator_NUM_R}, ${mv2_RGBOperator_NUM_B}, ${mv2_RGBOperator_NUM_G})`;
           break;
         case OpCode.mv2_HSLOperator:
           const mv2_HSLOperator_NUM_H = inputToPython(block.inputs.NUM_H, InputShape.Any);
           const mv2_HSLOperator_NUM_S = inputToPython(block.inputs.NUM_S, InputShape.Any);
           const mv2_HSLOperator_NUM_L = inputToPython(block.inputs.NUM_L, InputShape.Any);
-          blockSource = `martypy.rgb_operator(${mv2_HSLOperator_NUM_H}, ${mv2_HSLOperator_NUM_S}, ${mv2_HSLOperator_NUM_L}) # not implemented in python`;
+          blockSource = `martypy.hsv_operator(${mv2_HSLOperator_NUM_H}, ${mv2_HSLOperator_NUM_S}, ${mv2_HSLOperator_NUM_L})`;
           break;
         case OpCode.mv2_discoChangeBackColour:
           const mv2_discoChangeBackColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
-          blockSource = `martypy.function_led(${mv2_discoChangeBackColour_colour}) # not implemented in python`;
+          const mv2_discoChangeBackColour_colour_final = objToRGBTupleHelper(mv2_discoChangeBackColour_colour);
+          blockSource = `martypy.function_led(colour=${mv2_discoChangeBackColour_colour_final}, breathe="on")`;
           break;
         case OpCode.mv2_discoSetBreatheBackColour:
           const mv2_discoSetBreatheBackColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
           const mv2_discoSetBreatheBackColour_time_ms = inputToPython(block.inputs.MILLISECONDS, InputShape.Any);
-          blockSource = `martypy.function_led_breath(${mv2_discoSetBreatheBackColour_colour}, ${mv2_discoSetBreatheBackColour_time_ms}) # not implemented in python`;
+          const mv2_discoSetBreatheBackColour_colour_final = objToRGBTupleHelper(mv2_discoSetBreatheBackColour_colour);
+          blockSource = `martypy.function_led(colour=${mv2_discoSetBreatheBackColour_colour_final}, breathe="breathe", breath_ms=${mv2_discoSetBreatheBackColour_time_ms})`;
           break;
         case OpCode.mv2_discoTurnOffBackColour:
-          blockSource = `martypy.function_led_off() # not implemented in python`;
+          blockSource = `martypy.function_led_off()`;
           break;
         case OpCode.mv2_discoChangeRegionColour:
           const mv2_discoChangeRegionColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
           const mv2_discoChangeRegionColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_discoChangeRegionColour_region = inputToPython(block.inputs.REGION, InputShape.Any);
-          blockSource = `martypy.disco_region(${mv2_discoChangeRegionColour_region}, ${mv2_discoChangeRegionColour_board}, ${mv2_discoChangeRegionColour_colour}) # not implemented in python`;
+          const mv2_discoChangeRegionColour_colour_final = objToRGBTupleHelper(mv2_discoChangeRegionColour_colour);
+          blockSource = `martypy.disco_color(region=${mv2_discoChangeRegionColour_region}, add_on=${mv2_discoChangeRegionColour_board}, color=${mv2_discoChangeRegionColour_colour_final}, api='led')`;
           break;
         // Sound
         case OpCode.mv2_playSoundUntilDone:
@@ -2180,4 +2204,15 @@ function formatPythonIndentation(script: string) {
   });
 
   return formattedCode;
+}
+
+function objToRGBTupleHelper(colour: string) {
+  let final = colour;
+  try {
+    const parsed = JSON.parse(colour);
+    final = `(${parsed.r}, ${parsed.g}, ${parsed.b})`;
+  } catch {
+    final = colour;
+  }
+  return final;
 }
