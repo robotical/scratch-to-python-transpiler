@@ -1,6 +1,6 @@
 {
   "name": "@robotical/scratch-to-python-transpiler",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Transpile Scratch project files to python code",
   "repository": {
     "type": "git",
