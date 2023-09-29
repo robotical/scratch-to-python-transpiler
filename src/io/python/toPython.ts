@@ -1950,55 +1950,55 @@ export default function toPython(
           break;
         // Sensing
         case OpCode.XAxisMovement:
-          blockSource = `martypy.get_accelerometer(True, 0)`;
+          blockSource = `martypy.get_accelerometer("x")`;
           break;
         case OpCode.YAxisMovement:
-          blockSource = `martypy.get_accelerometer(True, 1)`;
+          blockSource = `martypy.get_accelerometer("y")`;
           break;
         case OpCode.ZAxisMovement:
-          blockSource = `martypy.get_accelerometer(True, 2)`;
+          blockSource = `martypy.get_accelerometer("z")`;
           break;
         case OpCode.BatteryPercentage:
           blockSource = "martypy.get_battery_remaining()";
           break;
         case OpCode.ServoCurrent:
-          const mv2_ServoCurrent_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_ServoCurrent_servo_choice = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
           blockSource = `martypy.get_joint_current(${mv2_ServoCurrent_servo_choice})`;
           break;
         case OpCode.ServoPosition:
-          const mv2_ServoPosition_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_ServoPosition_servo_choice = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
           blockSource = `martypy.get_joint_position(${mv2_ServoPosition_servo_choice})`;
           break;
         case OpCode.mv2_obstaclesense:
-          const mv2_obstaclesense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_obstaclesense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
           blockSource = `martypy.foot_obstacle_sensed(${mv2_obstaclesense_servo_choice})`;
           break;
         case OpCode.mv2_groundsense:
-          const mv2_groundsense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_groundsense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
           blockSource = `martypy.foot_on_ground(${mv2_groundsense_servo_choice})`;
           break;
         case OpCode.mv2_coloursense:
-          const mv2_coloursense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
-          blockSource = `martypy.get_colour_sensor(${mv2_coloursense_servo_choice}) # not implemented in python`;
+          const mv2_coloursense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
+          blockSource = `martypy.get_color_sensor_color(${mv2_coloursense_servo_choice})`;
           break;
         case OpCode.mv2_coloursense_hex:
-          const mv2_coloursense_hex_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
-          blockSource = `martypy.get_colour_sensor_hex(${mv2_coloursense_hex_servo_choice}) # not implemented in python`;
+          const mv2_coloursense_hex_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
+          blockSource = `martypy.get_color_sensor_hex(${mv2_coloursense_hex_servo_choice})`;
           break;
         case OpCode.mv2_coloursenseraw:
-          const mv2_coloursenseraw_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
-          blockSource = `martypy.get_colour_sensor_raw(${mv2_coloursenseraw_servo_choice}) # not implemented in python`;
+          const mv2_coloursenseraw_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
+          const mv2_coloursenseraw_channel = inputToPython(block.inputs.SENSORCHANNEL, InputShape.Any);
+          blockSource = `martypy.get_color_sensor_value_by_channel(${mv2_coloursenseraw_servo_choice}, ${mv2_coloursenseraw_channel})`;
           break;
         case OpCode.mv2_distancesense:
-          const mv2_distancesense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
-          blockSource = `martypy.get_distance_sensor(${mv2_distancesense_servo_choice})`;
+          blockSource = `martypy.get_distance_sensor()`;
           break;
         case OpCode.mv2_lightsense:
-          const mv2_lightsense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_lightsense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
           blockSource = `martypy.get_light_sensor(${mv2_lightsense_servo_choice}) # not implemented in python`;
           break;
         case OpCode.mv2_noisesense:
-          const mv2_noisesense_servo_choice = inputToPython(block.inputs.SERVOCHOICE, InputShape.Any);
+          const mv2_noisesense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
           blockSource = `martypy.get_noise_sensor(${mv2_noisesense_servo_choice}) # not implemented in python`;
           break;
         // Speak
@@ -2008,7 +2008,7 @@ export default function toPython(
           break;
         default:
           satisfiesInputShape = InputShape.Any;
-          blockSource = `# TODO: Implement ${block.opcode}`;
+          blockSource = `# ${block.opcode} is not implemented yet!`;
           break;
       }
 
