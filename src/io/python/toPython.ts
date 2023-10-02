@@ -1827,14 +1827,16 @@ export default function toPython(
           const mv2_gripperArmBasic_hand_position = ["open", "close"][
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
-          blockSource = `martypy.gripper("${mv2_gripperArmBasic_hand_position}") # not implemented in python`;
+          // blockSource = `martypy.gripper("${mv2_gripperArmBasic_hand_position}") # not implemented in python`;
+          blockSource = `# Gripper Block is not implemented in python yet`;
           break;
         case OpCode.mv2_gripperArmTimed:
           const mv2_gripperArmTimed_hand_position = ["open", "close"][
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
           const mv2_gripperArmTimed_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.gripper("${mv2_gripperArmTimed_hand_position}", ${mv2_gripperArmTimed_moveTimeMs}) # not implemented in python`;
+          // blockSource = `martypy.gripper("${mv2_gripperArmTimed_hand_position}", ${mv2_gripperArmTimed_moveTimeMs}) # not implemented in python`;
+          blockSource = `# Gripper Block is not implemented in python yet`;
           break;
         case OpCode.mv2_wiggle:
           blockSource = `martypy.wiggle()`;
@@ -1910,43 +1912,53 @@ export default function toPython(
         // Sound
         case OpCode.mv2_playSoundUntilDone:
           const mv2_playSoundUntilDone_sound = inputToPython(block.inputs.SOUND_MENU, InputShape.Any);
-          blockSource = `martypy.play_sound_until_done(${mv2_playSoundUntilDone_sound}) # not implemented in python`;
+          // blockSource = `martypy.play_sound_until_done(${mv2_playSoundUntilDone_sound}) # Play Sound is not implemented in python yet`;
+          blockSource = `# Play Sound is not implemented in python yet`;
           break;
         case OpCode.mv2_playNote:
           const mv2_playNote_note = inputToPython(block.inputs.NOTES_MENU, InputShape.Any);
-          blockSource = `martypy.play_note(${mv2_playNote_note}) # not implemented in python`;
+          // blockSource = `martypy.play_note(${mv2_playNote_note}) # not implemented in python`;
+          blockSource = `# Play Note is not implemented in python yet`;
           break;
         case OpCode.mv2_playTone:
           const mv2_playTone_hz1 = inputToPython(block.inputs.HZ1, InputShape.Any);
           const mv2_playTone_hz2 = inputToPython(block.inputs.HZ2, InputShape.Any);
           const mv2_playTone_seconds = inputToPython(block.inputs.SECONDS, InputShape.Any);
-          blockSource = `martypy.play_tone(${mv2_playTone_hz1},${mv2_playTone_hz2}, ${mv2_playTone_seconds}) # not implemented in python`;
+          // blockSource = `martypy.play_tone(${mv2_playTone_hz1},${mv2_playTone_hz2}, ${mv2_playTone_seconds}) # not implemented in python`;
+          blockSource = `# Play Note is not implemented in python yet`;
           break;
         case OpCode.mv2_stopSounds:
-          blockSource = `martypy.stop_sound() # not implemented in python`;
+          // blockSource = `martypy.stop_sound() # not implemented in python`;
+          blockSource = `# Stop Sounds is not implemented in python`;
           break;
         case OpCode.mv2_playSound:
           const mv2_playSound_sound = inputToPython(block.inputs.SOUND_MENU, InputShape.Any);
-          blockSource = `martypy.play_sound(${mv2_playSound_sound}) # not implemented in python`;
+          // blockSource = `martypy.play_sound(${mv2_playSound_sound}) # not implemented in python`;
+          blockSource = `# Play Sound not implemented in python`;
           break;
         case OpCode.mv2_changePitchEffect:
           const mv2_changePitchEffect_pitch = inputToPython(block.inputs.VALUE, InputShape.Any);
-          blockSource = `martypy.change_pitch_effect(${mv2_changePitchEffect_pitch}) # not implemented in python`;
+          // blockSource = `martypy.change_pitch_effect(${mv2_changePitchEffect_pitch}) # not implemented in python`;
+          blockSource = `# Change Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_setPitchEffect:
           const mv2_setPitchEffect_pitch = inputToPython(block.inputs.VALUE, InputShape.Any);
-          blockSource = `martypy.set_pitch_effect(${mv2_setPitchEffect_pitch}) # not implemented in python`;
+          // blockSource = `martypy.set_pitch_effect(${mv2_setPitchEffect_pitch}) # not implemented in python`;
+          blockSource = `# Change Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_clearSoundEffects:
-          blockSource = `martypy.clear_sound_effects() # not implemented in python`;
+          // blockSource = `martypy.clear_sound_effects() # not implemented in python`;
+          blockSource = `# Clear Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_changeVolume:
           const mv2_changeVolume_volume = inputToPython(block.inputs.VOLUME, InputShape.Any);
-          blockSource = `martypy.change_volume(${mv2_changeVolume_volume}) # not implemented in python`;
+          // blockSource = `martypy.change_volume(${mv2_changeVolume_volume}) # not implemented in python`;
+          blockSource = `# Change Volume is not implemented in python`;
           break;
         case OpCode.mv2_setVolume:
           const mv2_setVolume_volume = inputToPython(block.inputs.VOLUME, InputShape.Any);
-          blockSource = `martypy.set_volume(${mv2_setVolume_volume}) # not implemented in python`;
+          // blockSource = `martypy.set_volume(${mv2_setVolume_volume}) # not implemented in python`;
+          blockSource = `# Set Volume is not implemented in python`;
           break;
         // Sensing
         case OpCode.XAxisMovement:
@@ -1995,16 +2007,18 @@ export default function toPython(
           break;
         case OpCode.mv2_lightsense:
           const mv2_lightsense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.get_light_sensor(${mv2_lightsense_servo_choice}) # not implemented in python`;
+          // blockSource = `martypy.get_light_sensor(${mv2_lightsense_servo_choice}) # not implemented in python`;
+          blockSource = ` # Light Sensor is not implemented in python yet`;
           break;
         case OpCode.mv2_noisesense:
           const mv2_noisesense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.get_noise_sensor(${mv2_noisesense_servo_choice}) # not implemented in python`;
+          // blockSource = `martypy.get_noise_sensor(${mv2_noisesense_servo_choice}) # not implemented in python`;
+          blockSource = `# Noise Sensor not implemented in python`;
           break;
         // Speak
         case OpCode.text2speech_marty_speakAndWait:
           const mv2_speak_text = inputToPython(block.inputs.WORDS, InputShape.Any);
-          blockSource = `martypy.speak(${mv2_speak_text}) # not implemented in python`;
+          blockSource = `martypy.speak(${mv2_speak_text})`;
           break;
         default:
           satisfiesInputShape = InputShape.Any;
