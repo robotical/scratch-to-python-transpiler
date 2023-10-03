@@ -14,7 +14,7 @@ const NOT_IMPLEMENTED_YET = "# This block is not implemented yet.";
 const INDENTATION_RESET_CODE = "%^&*()";
 /**
  * Words which are invalid for any Python identifier to be, when it isn't
- * on a namespace (like `this` or `martypy.vars`).
+ * on a namespace (like `this` or `my_marty.vars`).
  */
 const PYTHON_RESERVED_WORDS = [
   "False",
@@ -682,7 +682,7 @@ export default function toPython(
 
         case OpCode.looks_sayforsecs:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.sayAndWait((${inputToPython(block.inputs.MESSAGE, InputShape.Any)}), (${inputToPython(
+          blockSource = `my_marty.sayAndWait((${inputToPython(block.inputs.MESSAGE, InputShape.Any)}), (${inputToPython(
             block.inputs.SECS,
             InputShape.Number
           )}))`;
@@ -690,12 +690,12 @@ export default function toPython(
 
         case OpCode.looks_say:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.say(${inputToPython(block.inputs.MESSAGE, InputShape.Any)})`;
+          blockSource = `my_marty.say(${inputToPython(block.inputs.MESSAGE, InputShape.Any)})`;
           break;
 
         case OpCode.looks_thinkforsecs:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.thinkAndWait((${inputToPython(block.inputs.MESSAGE, InputShape.Any)}), (${inputToPython(
+          blockSource = `my_marty.thinkAndWait((${inputToPython(block.inputs.MESSAGE, InputShape.Any)}), (${inputToPython(
             block.inputs.SECS,
             InputShape.Number
           )}))`;
@@ -703,17 +703,17 @@ export default function toPython(
 
         case OpCode.looks_think:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.think(${inputToPython(block.inputs.MESSAGE, InputShape.Any)})`;
+          blockSource = `my_marty.think(${inputToPython(block.inputs.MESSAGE, InputShape.Any)})`;
           break;
 
         case OpCode.looks_switchcostumeto:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.costume = (${inputToPython(block.inputs.COSTUME, InputShape.Any)})`;
+          blockSource = `my_marty.costume = (${inputToPython(block.inputs.COSTUME, InputShape.Any)})`;
           break;
 
         case OpCode.looks_nextcostume:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.costumeNumber++`;
+          blockSource = `my_marty.costumeNumber++`;
           break;
 
         case OpCode.looks_switchbackdropto:
@@ -728,58 +728,58 @@ export default function toPython(
 
         case OpCode.looks_changesizeby:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = increase(`martypy.size`, block.inputs.CHANGE, false);
+          blockSource = increase(`my_marty.size`, block.inputs.CHANGE, false);
           break;
 
         case OpCode.looks_setsizeto:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.size = (${inputToPython(block.inputs.SIZE, InputShape.Number)})`;
+          blockSource = `my_marty.size = (${inputToPython(block.inputs.SIZE, InputShape.Number)})`;
           break;
 
         case OpCode.looks_changeeffectby: {
           const effectName = block.inputs.EFFECT.value.toLowerCase();
           satisfiesInputShape = InputShape.Stack;
-          blockSource = increase(`martypy.effects.${effectName}`, block.inputs.CHANGE, false);
+          blockSource = increase(`my_marty.effects.${effectName}`, block.inputs.CHANGE, false);
           break;
         }
 
         case OpCode.looks_seteffectto: {
           const effectName = block.inputs.EFFECT.value.toLowerCase();
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.effects.${effectName} = ${inputToPython(block.inputs.VALUE, InputShape.Number)}`;
+          blockSource = `my_marty.effects.${effectName} = ${inputToPython(block.inputs.VALUE, InputShape.Number)}`;
           break;
         }
 
         case OpCode.looks_cleargraphiceffects:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.effects.clear()`;
+          blockSource = `my_marty.effects.clear()`;
           break;
 
         case OpCode.looks_show:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.visible = true`;
+          blockSource = `my_marty.visible = true`;
           break;
 
         case OpCode.looks_hide:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.visible = false`;
+          blockSource = `my_marty.visible = false`;
           break;
 
         case OpCode.looks_gotofrontback:
           satisfiesInputShape = InputShape.Stack;
           if (block.inputs.FRONT_BACK.value === "front") {
-            blockSource = `martypy.moveAhead()`;
+            blockSource = `my_marty.moveAhead()`;
           } else {
-            blockSource = `martypy.moveBehind()`;
+            blockSource = `my_marty.moveBehind()`;
           }
           break;
 
         case OpCode.looks_goforwardbackwardlayers:
           satisfiesInputShape = InputShape.Stack;
           if (block.inputs.FORWARD_BACKWARD.value === "forward") {
-            blockSource = `martypy.moveAhead(${inputToPython(block.inputs.NUM, InputShape.Number)})`;
+            blockSource = `my_marty.moveAhead(${inputToPython(block.inputs.NUM, InputShape.Number)})`;
           } else {
-            blockSource = `martypy.moveBehind(${inputToPython(block.inputs.NUM, InputShape.Number)})`;
+            blockSource = `my_marty.moveBehind(${inputToPython(block.inputs.NUM, InputShape.Number)})`;
           }
           break;
 
@@ -795,12 +795,12 @@ export default function toPython(
           switch (block.inputs.NUMBER_NAME.value) {
             case "name":
               satisfiesInputShape = InputShape.String;
-              blockSource = `martypy.costume.name`;
+              blockSource = `my_marty.costume.name`;
               break;
             case "number":
             default:
               satisfiesInputShape = InputShape.Number;
-              blockSource = `martypy.costumeNumber`;
+              blockSource = `my_marty.costumeNumber`;
               break;
           }
           break;
@@ -821,41 +821,41 @@ export default function toPython(
 
         case OpCode.looks_size:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.size`;
+          blockSource = `my_marty.size`;
           break;
 
         case OpCode.sound_playuntildone:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.playSoundUntilDone(${inputToPython(block.inputs.SOUND_MENU, InputShape.Any)})`;
+          blockSource = `my_marty.playSoundUntilDone(${inputToPython(block.inputs.SOUND_MENU, InputShape.Any)})`;
           break;
 
         case OpCode.sound_play:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.startSound(${inputToPython(block.inputs.SOUND_MENU, InputShape.Any)})`;
+          blockSource = `my_marty.startSound(${inputToPython(block.inputs.SOUND_MENU, InputShape.Any)})`;
           break;
 
         case OpCode.sound_setvolumeto:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.audioEffects.volume = ${inputToPython(block.inputs.VOLUME, InputShape.Number)}`;
+          blockSource = `my_marty.audioEffects.volume = ${inputToPython(block.inputs.VOLUME, InputShape.Number)}`;
           break;
 
         case OpCode.sound_changevolumeby:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = increase(`martypy.audioEffects.volume`, block.inputs.VOLUME, false);
+          blockSource = increase(`my_marty.audioEffects.volume`, block.inputs.VOLUME, false);
           break;
 
         case OpCode.sound_volume:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.audioEffects.volume`;
+          blockSource = `my_marty.audioEffects.volume`;
           break;
 
         case OpCode.sound_seteffectto: {
           satisfiesInputShape = InputShape.Stack;
           const value = inputToPython(block.inputs.VALUE, InputShape.Number);
           if (block.inputs.EFFECT.type === "soundEffect") {
-            blockSource = `martypy.audioEffects.${block.inputs.EFFECT.value.toLowerCase()} = ${value}`;
+            blockSource = `my_marty.audioEffects.${block.inputs.EFFECT.value.toLowerCase()} = ${value}`;
           } else {
-            blockSource = `martypy.audioEffects[${inputToPython(block.inputs.EFFECT, InputShape.Any)}] = ${value}`;
+            blockSource = `my_marty.audioEffects[${inputToPython(block.inputs.EFFECT, InputShape.Any)}] = ${value}`;
           }
           break;
         }
@@ -864,10 +864,10 @@ export default function toPython(
           satisfiesInputShape = InputShape.Stack;
           const value = block.inputs.VALUE;
           if (block.inputs.EFFECT.type === "soundEffect") {
-            blockSource = increase(`martypy.audioEffects.${block.inputs.EFFECT.value.toLowerCase()}`, value, false);
+            blockSource = increase(`my_marty.audioEffects.${block.inputs.EFFECT.value.toLowerCase()}`, value, false);
           } else {
             blockSource = increase(
-              `martypy.audioEffects[${inputToPython(block.inputs.EFFECT, InputShape.Any)}]`,
+              `my_marty.audioEffects[${inputToPython(block.inputs.EFFECT, InputShape.Any)}]`,
               value,
               false
             );
@@ -877,22 +877,22 @@ export default function toPython(
 
         case OpCode.sound_cleareffects:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.audioEffects.clear()`;
+          blockSource = `my_marty.audioEffects.clear()`;
           break;
 
         case OpCode.sound_stopallsounds:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.stopAllSounds()`;
+          blockSource = `my_marty.stopAllSounds()`;
           break;
 
         case OpCode.event_broadcast:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.broadcast(${inputToPython(block.inputs.BROADCAST_INPUT, InputShape.String)})`;
+          blockSource = `my_marty.broadcast(${inputToPython(block.inputs.BROADCAST_INPUT, InputShape.String)})`;
           break;
 
         case OpCode.event_broadcastandwait:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.broadcastAndWait(${inputToPython(block.inputs.BROADCAST_INPUT, InputShape.String)})`;
+          blockSource = `my_marty.broadcastAndWait(${inputToPython(block.inputs.BROADCAST_INPUT, InputShape.String)})`;
           break;
 
         case OpCode.control_wait:
@@ -1005,13 +1005,13 @@ export default function toPython(
           satisfiesInputShape = InputShape.Boolean;
           switch (block.inputs.TOUCHINGOBJECTMENU.value) {
             case "_mouse_":
-              blockSource = `martypy.touching("mouse")`;
+              blockSource = `my_marty.touching("mouse")`;
               break;
             case "_edge_":
-              blockSource = `martypy.touching("edge")`;
+              blockSource = `my_marty.touching("edge")`;
               break;
             default:
-              blockSource = `martypy.touching(this.sprites[${JSON.stringify(
+              blockSource = `my_marty.touching(this.sprites[${JSON.stringify(
                 targetNameMap[block.inputs.TOUCHINGOBJECTMENU.value]
               )}].andClones())`;
               break;
@@ -1022,9 +1022,9 @@ export default function toPython(
           satisfiesInputShape = InputShape.Boolean;
           if (block.inputs.COLOR.type === "color") {
             const { r, g, b } = block.inputs.COLOR.value;
-            blockSource = `martypy.touching(Color.rgb(${r}, ${g}, ${b}))`;
+            blockSource = `my_marty.touching(Color.rgb(${r}, ${g}, ${b}))`;
           } else {
-            blockSource = `martypy.touching(Color.num(${inputToPython(block.inputs.COLOR, InputShape.Number)}))`;
+            blockSource = `my_marty.touching(Color.num(${inputToPython(block.inputs.COLOR, InputShape.Number)}))`;
           }
           break;
 
@@ -1047,7 +1047,7 @@ export default function toPython(
           }
 
           satisfiesInputShape = InputShape.Boolean;
-          blockSource = `martypy.colorTouching((${color1}), (${color2}))`;
+          blockSource = `my_marty.colorTouching((${color1}), (${color2}))`;
           break;
         }
 
@@ -1056,10 +1056,10 @@ export default function toPython(
 
           switch (block.inputs.DISTANCETOMENU.value) {
             case "_mouse_":
-              coords = `martypy.mouse`;
+              coords = `my_marty.mouse`;
               break;
             default:
-              coords = `martypy.sprites[${JSON.stringify(targetNameMap[block.inputs.DISTANCETOMENU.value])}]`;
+              coords = `my_marty.sprites[${JSON.stringify(targetNameMap[block.inputs.DISTANCETOMENU.value])}]`;
               break;
           }
 
@@ -1070,46 +1070,46 @@ export default function toPython(
 
         case OpCode.sensing_askandwait:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.askAndWait(${inputToPython(block.inputs.QUESTION, InputShape.Any)})`;
+          blockSource = `my_marty.askAndWait(${inputToPython(block.inputs.QUESTION, InputShape.Any)})`;
           break;
 
         case OpCode.sensing_answer:
           satisfiesInputShape = InputShape.String;
-          blockSource = `martypy.answer`;
+          blockSource = `my_marty.answer`;
           break;
 
         case OpCode.sensing_keypressed:
           satisfiesInputShape = InputShape.Boolean;
-          blockSource = `martypy.keyPressed(${inputToPython(block.inputs.KEY_OPTION, InputShape.String)})`;
+          blockSource = `my_marty.keyPressed(${inputToPython(block.inputs.KEY_OPTION, InputShape.String)})`;
           break;
 
         case OpCode.sensing_mousedown:
           satisfiesInputShape = InputShape.Boolean;
-          blockSource = `martypy.mouse.down`;
+          blockSource = `my_marty.mouse.down`;
           break;
         case OpCode.sensing_mousex:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.mouse.x`;
+          blockSource = `my_marty.mouse.x`;
           break;
 
         case OpCode.sensing_mousey:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.mouse.y`;
+          blockSource = `my_marty.mouse.y`;
           break;
 
         case OpCode.sensing_loudness:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.loudness`;
+          blockSource = `my_marty.loudness`;
           break;
 
         case OpCode.sensing_timer:
           satisfiesInputShape = InputShape.Number;
-          blockSource = `martypy.timer`;
+          blockSource = `my_marty.timer`;
           break;
 
         case OpCode.sensing_resettimer:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.restartTimer()`;
+          blockSource = `my_marty.restartTimer()`;
           break;
 
         case OpCode.sensing_of: {
@@ -1165,9 +1165,9 @@ export default function toPython(
 
           let targetObj: string;
           if (block.inputs.OBJECT.value === "_stage_") {
-            targetObj = `martypy.stage`;
+            targetObj = `my_marty.stage`;
           } else {
-            targetObj = `martypy.sprites[${JSON.stringify(targetNameMap[block.inputs.OBJECT.value])}]`;
+            targetObj = `my_marty.sprites[${JSON.stringify(targetNameMap[block.inputs.OBJECT.value])}]`;
           }
 
           blockSource = `${targetObj}.${propName}`;
@@ -1571,16 +1571,16 @@ export default function toPython(
         case OpCode.data_itemoflist:
           satisfiesInputShape = InputShape.Any;
           if (block.inputs.INDEX.value === "last") {
-            blockSource = `martypy.itemOf(${selectedVarSource}, ${selectedVarSource}.length - 1)`;
+            blockSource = `my_marty.itemOf(${selectedVarSource}, ${selectedVarSource}.length - 1)`;
           } else {
-            blockSource = `martypy.itemOf(${selectedVarSource}, ${inputToPython(block.inputs.INDEX, InputShape.Index)})`;
+            blockSource = `my_marty.itemOf(${selectedVarSource}, ${inputToPython(block.inputs.INDEX, InputShape.Index)})`;
           }
           break;
 
         case OpCode.data_itemnumoflist:
           if (desiredInputShape === InputShape.Index) {
             satisfiesInputShape = InputShape.Index;
-            blockSource = `martypy.indexInArray(${selectedVarSource}, ${inputToPython(block.inputs.ITEM, InputShape.Any)})`;
+            blockSource = `my_marty.indexInArray(${selectedVarSource}, ${inputToPython(block.inputs.ITEM, InputShape.Any)})`;
           } else {
             satisfiesInputShape = InputShape.Number;
             blockSource = `(this.indexInArray(${selectedVarSource}, ${inputToPython(
@@ -1597,7 +1597,7 @@ export default function toPython(
 
         case OpCode.data_listcontainsitem:
           satisfiesInputShape = InputShape.Boolean;
-          blockSource = `martypy.arrayIncludes(${selectedVarSource}, ${inputToPython(block.inputs.ITEM, InputShape.Any)})`;
+          blockSource = `my_marty.arrayIncludes(${selectedVarSource}, ${inputToPython(block.inputs.ITEM, InputShape.Any)})`;
           break;
 
         case OpCode.data_showlist:
@@ -1626,9 +1626,9 @@ export default function toPython(
 
           // Warp-mode procedures execute all child procedures in warp mode as well
           if (warp) {
-            blockSource = `martypy.warp(this.${procName})(${procArgs})`;
+            blockSource = `my_marty.warp(this.${procName})(${procArgs})`;
           } else {
-            blockSource = `martypy.${procName}(${procArgs})`;
+            blockSource = `my_marty.${procName}(${procArgs})`;
           }
           break;
         }
@@ -1652,31 +1652,31 @@ export default function toPython(
 
         case OpCode.pen_clear:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.clearPen()`;
+          blockSource = `my_marty.clearPen()`;
           break;
 
         case OpCode.pen_stamp:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.stamp()`;
+          blockSource = `my_marty.stamp()`;
           break;
 
         case OpCode.pen_penDown:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.penDown = true`;
+          blockSource = `my_marty.penDown = true`;
           break;
 
         case OpCode.pen_penUp:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.penDown = false`;
+          blockSource = `my_marty.penDown = false`;
           break;
 
         case OpCode.pen_setPenColorToColor:
           satisfiesInputShape = InputShape.Stack;
           if (block.inputs.COLOR.type === "color") {
             const { r, g, b } = block.inputs.COLOR.value;
-            blockSource = `martypy.penColor = Color.rgb(${r}, ${g}, ${b})`;
+            blockSource = `my_marty.penColor = Color.rgb(${r}, ${g}, ${b})`;
           } else {
-            blockSource = `martypy.penColor = Color.num(${inputToPython(block.inputs.COLOR, InputShape.Number)})`;
+            blockSource = `my_marty.penColor = Color.num(${inputToPython(block.inputs.COLOR, InputShape.Number)})`;
           }
           break;
 
@@ -1684,16 +1684,16 @@ export default function toPython(
           satisfiesInputShape = InputShape.Stack;
           switch (block.inputs.colorParam.value) {
             case "color":
-              blockSource = increase(`martypy.penColor.h`, block.inputs.VALUE, false);
+              blockSource = increase(`my_marty.penColor.h`, block.inputs.VALUE, false);
               break;
             case "saturation":
-              blockSource = increase(`martypy.penColor.s`, block.inputs.VALUE, false);
+              blockSource = increase(`my_marty.penColor.s`, block.inputs.VALUE, false);
               break;
             case "brightness":
-              blockSource = increase(`martypy.penColor.v`, block.inputs.VALUE, false);
+              blockSource = increase(`my_marty.penColor.v`, block.inputs.VALUE, false);
               break;
             case "transparency":
-              blockSource = `martypy.penColor.a -= ((${inputToPython(block.inputs.VALUE, InputShape.Number)}) / 100)`;
+              blockSource = `my_marty.penColor.a -= ((${inputToPython(block.inputs.VALUE, InputShape.Number)}) / 100)`;
               break;
           }
           break;
@@ -1702,96 +1702,96 @@ export default function toPython(
           satisfiesInputShape = InputShape.Stack;
           switch (block.inputs.colorParam.value) {
             case "color":
-              blockSource = `martypy.penColor.h = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
+              blockSource = `my_marty.penColor.h = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
               break;
             case "saturation":
-              blockSource = `martypy.penColor.s = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
+              blockSource = `my_marty.penColor.s = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
               break;
             case "brightness":
-              blockSource = `martypy.penColor.v = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
+              blockSource = `my_marty.penColor.v = (${inputToPython(block.inputs.VALUE, InputShape.Number)})`;
               break;
             case "transparency":
-              blockSource = `martypy.penColor.a = (1 - ((${inputToPython(block.inputs.VALUE, InputShape.Any)}) / 100))`;
+              blockSource = `my_marty.penColor.a = (1 - ((${inputToPython(block.inputs.VALUE, InputShape.Any)}) / 100))`;
               break;
           }
           break;
 
         case OpCode.pen_setPenSizeTo:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = `martypy.penSize = (${inputToPython(block.inputs.SIZE, InputShape.Number)})`;
+          blockSource = `my_marty.penSize = (${inputToPython(block.inputs.SIZE, InputShape.Number)})`;
           break;
 
         case OpCode.pen_changePenSizeBy:
           satisfiesInputShape = InputShape.Stack;
-          blockSource = increase(`martypy.penSize`, block.inputs.SIZE, false);
+          blockSource = increase(`my_marty.penSize`, block.inputs.SIZE, false);
           break;
         // **** MARTY BLOCKS ****
         // Motion
         case OpCode.mv2_dance:
-          blockSource = `martypy.dance()`;
+          blockSource = `my_marty.dance()`;
           break;
         case OpCode.mv2_getReady:
-          blockSource = `martypy.get_ready()`;
+          blockSource = `my_marty.get_ready()`;
           break;
         case OpCode.mv2_circle:
           const mv2_circle_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
           const mv2_circle_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.circle_dance("${mv2_circle_side}", ${mv2_circle_moveTimeMs})`;
+          blockSource = `my_marty.circle_dance("${mv2_circle_side}", ${mv2_circle_moveTimeMs})`;
           break;
         case OpCode.mv2_eyes:
           const mv2_eyes = inputToPython(block.inputs.COMMAND, InputShape.Any);
           // pose must be one of {'angry', 'wide', 'excited', 'wiggle', 'normal'},
-          const eyesMartyPyMap = {
+          const eyesmy_martyMap = {
             '"eyesExcited"': '"excited"',
             '"eyesWide"': '"wide"',
             '"eyesAngry"': '"angry"',
             '"wiggleEyes"': '"wiggle"',
             '"eyesNormal"': '"normal"',
           };
-          blockSource = `martypy.eyes(${eyesMartyPyMap[mv2_eyes]})`;
+          blockSource = `my_marty.eyes(${eyesmy_martyMap[mv2_eyes]})`;
           break;
         case OpCode.mv2_kick:
           const mv2_kick_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.kick("${mv2_kick_side}")`;
+          blockSource = `my_marty.kick("${mv2_kick_side}")`;
           break;
         case OpCode.mv2_hold:
           const mv2_hold_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.hold_position(${mv2_hold_moveTimeMs})`;
+          blockSource = `my_marty.hold_position(${mv2_hold_moveTimeMs})`;
           break;
         case OpCode.mv2_lean:
           const mv2_lean_side = ["left", "right", "forward", "back"][inputToPython(block.inputs.SIDE, InputShape.Any)];
           const mv2_lean_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.lean(direction="${mv2_lean_side}", move_time=${mv2_lean_moveTimeMs})`;
+          blockSource = `my_marty.lean(direction="${mv2_lean_side}", move_time=${mv2_lean_moveTimeMs})`;
           break;
         case OpCode.mv2_liftFoot:
           const mv2_lift_foot_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.lift_foot("${mv2_lift_foot_side}")`;
+          blockSource = `my_marty.lift_foot("${mv2_lift_foot_side}")`;
           break;
         case OpCode.mv2_lowerFoot:
           const mv2_lower_foot_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.lower_foot("${mv2_lower_foot_side}")`;
+          blockSource = `my_marty.lower_foot("${mv2_lower_foot_side}")`;
           break;
         case OpCode.mv2_moveJoint:
           const mv2_moveJoint_joint_id = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
           const mv2_moveJoint_angle = inputToPython(block.inputs.ANGLE, InputShape.Number);
           const mv2_moveJoint_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.move_joint(joint_name_or_num="${mv2_moveJoint_joint_id}", position=${mv2_moveJoint_angle}, move_time=${mv2_moveJoint_moveTimeMs})`;
+          blockSource = `my_marty.move_joint(joint_name_or_num="${mv2_moveJoint_joint_id}", position=${mv2_moveJoint_angle}, move_time=${mv2_moveJoint_moveTimeMs})`;
           break;
         case OpCode.mv2_slide:
           const mv2_slide_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
           const mv2_slide_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
-          blockSource = `martypy.sidestep("${mv2_slide_side}", ${mv2_slide_steps})`;
+          blockSource = `my_marty.sidestep("${mv2_slide_side}", ${mv2_slide_steps})`;
           break;
         case OpCode.mv2_slideMsLength:
           const mv2_slideMsLength_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
           const mv2_slideMsLength_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
           const mv2_slideMsLength_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
           const mv2_slideMsLength_length = inputToPython(block.inputs.STEPLEN, InputShape.Number);
-          blockSource = `martypy.sidestep("${mv2_slideMsLength_side}", ${mv2_slideMsLength_steps}, ${mv2_slideMsLength_length}, ${mv2_slideMsLength_moveTimeMs})`;
+          blockSource = `my_marty.sidestep("${mv2_slideMsLength_side}", ${mv2_slideMsLength_steps}, ${mv2_slideMsLength_length}, ${mv2_slideMsLength_moveTimeMs})`;
           break;
         case OpCode.mv2_standStraight:
           const mv2_standStraight_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          blockSource = `martypy.stand_straight(${mv2_standStraight_moveTimeMs})`;
+          blockSource = `my_marty.stand_straight(${mv2_standStraight_moveTimeMs})`;
           break;
         case OpCode.mv2_turn:
           const mv2_turn_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
@@ -1800,15 +1800,15 @@ export default function toPython(
           if (mv2_turn_side === "1") {
             mv2_turn_angle = -20;
           }
-          blockSource = `martypy.walk(num_steps=${mv2_turn_steps}, turn=${mv2_turn_angle})`;
+          blockSource = `my_marty.walk(num_steps=${mv2_turn_steps}, turn=${mv2_turn_angle})`;
           break;
         case OpCode.mv2_walk_fw:
           const mv2_walk_fw_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
-          blockSource = `martypy.walk(num_steps=${mv2_walk_fw_steps}, turn=0, step_length=25)`;
+          blockSource = `my_marty.walk(num_steps=${mv2_walk_fw_steps}, turn=0, step_length=25)`;
           break;
         case OpCode.mv2_walk_bw:
           const mv2_walk_bw_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
-          blockSource = `martypy.walk(num_steps=${mv2_walk_bw_steps}, turn=0, step_length=-25)`;
+          blockSource = `my_marty.walk(num_steps=${mv2_walk_bw_steps}, turn=0, step_length=-25)`;
           break;
         case OpCode.mv2_walk:
           const mv2_walk_steps = inputToPython(block.inputs.STEPS, InputShape.Number);
@@ -1817,17 +1817,17 @@ export default function toPython(
           const mv2_walk_angle = inputToPython(block.inputs.TURN, InputShape.Number);
           let turn = parseInt(mv2_walk_angle);
           turn = Math.min(Math.max(turn, -25), 25);
-          blockSource = `martypy.walk(num_steps=${mv2_walk_steps}, turn=${turn}, step_length=${mv2_walk_length}, move_time=${mv2_walk_moveTimeMs})`;
+          blockSource = `my_marty.walk(num_steps=${mv2_walk_steps}, turn=${turn}, step_length=${mv2_walk_length}, move_time=${mv2_walk_moveTimeMs})`;
           break;
         case OpCode.mv2_wave:
           const mv2_wave_side = ["left", "right"][inputToPython(block.inputs.SIDE, InputShape.Any)];
-          blockSource = `martypy.wave("${mv2_wave_side}")`;
+          blockSource = `my_marty.wave("${mv2_wave_side}")`;
           break;
         case OpCode.mv2_gripperArmBasic:
           const mv2_gripperArmBasic_hand_position = ["open", "close"][
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
-          // blockSource = `martypy.gripper("${mv2_gripperArmBasic_hand_position}") # not implemented in python`;
+          // blockSource = `my_marty.gripper("${mv2_gripperArmBasic_hand_position}") # not implemented in python`;
           blockSource = `# Gripper Block is not implemented in python yet`;
           break;
         case OpCode.mv2_gripperArmTimed:
@@ -1835,30 +1835,30 @@ export default function toPython(
             inputToPython(block.inputs.HAND_POSITION, InputShape.Any)
           ];
           const mv2_gripperArmTimed_moveTimeMs = inputToPython(block.inputs.MOVETIME, InputShape.Number) + " * 1000";
-          // blockSource = `martypy.gripper("${mv2_gripperArmTimed_hand_position}", ${mv2_gripperArmTimed_moveTimeMs}) # not implemented in python`;
+          // blockSource = `my_marty.gripper("${mv2_gripperArmTimed_hand_position}", ${mv2_gripperArmTimed_moveTimeMs}) # not implemented in python`;
           blockSource = `# Gripper Block is not implemented in python yet`;
           break;
         case OpCode.mv2_wiggle:
-          blockSource = `martypy.wiggle()`;
+          blockSource = `my_marty.wiggle()`;
           break;
         // Looks
         case OpCode.mv2_discoChangeBlockPattern:
           const mv2_discoChangeBlockPattern_pattern = inputToPython(block.inputs.PATTERN, InputShape.Any);
           const mv2_discoChangeBlockPattern_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
-          blockSource = `martypy.disco_named_pattern(add_on=${mv2_discoChangeBlockPattern_board}, pattern=${mv2_discoChangeBlockPattern_pattern})`;
+          blockSource = `my_marty.disco_named_pattern(add_on=${mv2_discoChangeBlockPattern_board}, pattern=${mv2_discoChangeBlockPattern_pattern})`;
           break;
         case OpCode.mv2_LEDEyesColour:
           const mv2_LEDEyesColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_LEDEyesColour_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
           const mv2_LEDEyesColour_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_colour);
-          blockSource = `martypy.disco_color(color=${mv2_LEDEyesColour_colour_final}, add_on=${mv2_LEDEyesColour_board}, api='led')`;
+          blockSource = `my_marty.disco_color(color=${mv2_LEDEyesColour_colour_final}, add_on=${mv2_LEDEyesColour_board}, api='led')`;
           break;
         case OpCode.mv2_LEDEyesColour_SpecificLED:
           const mv2_LEDEyesColour_SpecificLED_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_led_position = inputToPython(block.inputs.LED_POSITION, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_SpecificLED_colour)
-          blockSource = `martypy.disco_color_specific_led(color=${mv2_LEDEyesColour_SpecificLED_colour_final}, add_on=${mv2_LEDEyesColour_SpecificLED_board}, led_id=${mv2_LEDEyesColour_SpecificLED_led_position})`;
+          blockSource = `my_marty.disco_color_specific_led(color=${mv2_LEDEyesColour_SpecificLED_colour_final}, add_on=${mv2_LEDEyesColour_SpecificLED_board}, led_id=${mv2_LEDEyesColour_SpecificLED_led_position})`;
           break;
         case OpCode.mv2_LEDEyesColourLEDs:
           const mv2_LEDEyesColourLEDs_colour = inputToPython(block.inputs.COLOUR, InputShape.Any);
@@ -1874,151 +1874,151 @@ export default function toPython(
           } catch {
             mv2_LEDEyesColourLEDs_colour_corrected = mv2_LEDEyesColourLEDs_colour === "#5ba591" ? '"#000000"' : mv2_LEDEyesColourLEDs_colour;
           }
-          blockSource = `martypy.disco_color_eyepicker(colours=${mv2_LEDEyesColourLEDs_colour_corrected}, add_on=${mv2_LEDEyesColourLEDs_board})`;
+          blockSource = `my_marty.disco_color_eyepicker(colours=${mv2_LEDEyesColourLEDs_colour_corrected}, add_on=${mv2_LEDEyesColourLEDs_board})`;
           break;
         case OpCode.mv2_RGBOperator:
           const mv2_RGBOperator_NUM_R = inputToPython(block.inputs.NUM_R, InputShape.Any);
           const mv2_RGBOperator_NUM_B = inputToPython(block.inputs.NUM_B, InputShape.Any);
           const mv2_RGBOperator_NUM_G = inputToPython(block.inputs.NUM_G, InputShape.Any);
-          blockSource = `martypy.rgb_operator(${mv2_RGBOperator_NUM_R}, ${mv2_RGBOperator_NUM_B}, ${mv2_RGBOperator_NUM_G})`;
+          blockSource = `my_marty.rgb_operator(${mv2_RGBOperator_NUM_R}, ${mv2_RGBOperator_NUM_B}, ${mv2_RGBOperator_NUM_G})`;
           break;
         case OpCode.mv2_HSLOperator:
           const mv2_HSLOperator_NUM_H = inputToPython(block.inputs.NUM_H, InputShape.Any);
           const mv2_HSLOperator_NUM_S = inputToPython(block.inputs.NUM_S, InputShape.Any);
           const mv2_HSLOperator_NUM_L = inputToPython(block.inputs.NUM_L, InputShape.Any);
-          blockSource = `martypy.hsv_operator(${mv2_HSLOperator_NUM_H}, ${mv2_HSLOperator_NUM_S}, ${mv2_HSLOperator_NUM_L})`;
+          blockSource = `my_marty.hsv_operator(${mv2_HSLOperator_NUM_H}, ${mv2_HSLOperator_NUM_S}, ${mv2_HSLOperator_NUM_L})`;
           break;
         case OpCode.mv2_discoChangeBackColour:
           const mv2_discoChangeBackColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
           const mv2_discoChangeBackColour_colour_final = objToRGBTupleHelper(mv2_discoChangeBackColour_colour);
-          blockSource = `martypy.function_led(colour=${mv2_discoChangeBackColour_colour_final}, breathe="on")`;
+          blockSource = `my_marty.function_led(colour=${mv2_discoChangeBackColour_colour_final}, breathe="on")`;
           break;
         case OpCode.mv2_discoSetBreatheBackColour:
           const mv2_discoSetBreatheBackColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
           const mv2_discoSetBreatheBackColour_time_ms = inputToPython(block.inputs.MILLISECONDS, InputShape.Any);
           const mv2_discoSetBreatheBackColour_colour_final = objToRGBTupleHelper(mv2_discoSetBreatheBackColour_colour);
-          blockSource = `martypy.function_led(colour=${mv2_discoSetBreatheBackColour_colour_final}, breathe="breathe", breath_ms=${mv2_discoSetBreatheBackColour_time_ms})`;
+          blockSource = `my_marty.function_led(colour=${mv2_discoSetBreatheBackColour_colour_final}, breathe="breathe", breath_ms=${mv2_discoSetBreatheBackColour_time_ms})`;
           break;
         case OpCode.mv2_discoTurnOffBackColour:
-          blockSource = `martypy.function_led_off()`;
+          blockSource = `my_marty.function_led_off()`;
           break;
         case OpCode.mv2_discoChangeRegionColour:
           const mv2_discoChangeRegionColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
           const mv2_discoChangeRegionColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
           const mv2_discoChangeRegionColour_region = inputToPython(block.inputs.REGION, InputShape.Any);
           const mv2_discoChangeRegionColour_colour_final = objToRGBTupleHelper(mv2_discoChangeRegionColour_colour);
-          blockSource = `martypy.disco_color(region=${mv2_discoChangeRegionColour_region}, add_on=${mv2_discoChangeRegionColour_board}, color=${mv2_discoChangeRegionColour_colour_final}, api='led')`;
+          blockSource = `my_marty.disco_color(region=${mv2_discoChangeRegionColour_region}, add_on=${mv2_discoChangeRegionColour_board}, color=${mv2_discoChangeRegionColour_colour_final}, api='led')`;
           break;
         // Sound
         case OpCode.mv2_playSoundUntilDone:
           const mv2_playSoundUntilDone_sound = inputToPython(block.inputs.SOUND_MENU, InputShape.Any);
-          // blockSource = `martypy.play_sound_until_done(${mv2_playSoundUntilDone_sound}) # Play Sound is not implemented in python yet`;
+          // blockSource = `my_marty.play_sound_until_done(${mv2_playSoundUntilDone_sound}) # Play Sound is not implemented in python yet`;
           blockSource = `# Play Sound is not implemented in python yet`;
           break;
         case OpCode.mv2_playNote:
           const mv2_playNote_note = inputToPython(block.inputs.NOTES_MENU, InputShape.Any);
-          // blockSource = `martypy.play_note(${mv2_playNote_note}) # not implemented in python`;
+          // blockSource = `my_marty.play_note(${mv2_playNote_note}) # not implemented in python`;
           blockSource = `# Play Note is not implemented in python yet`;
           break;
         case OpCode.mv2_playTone:
           const mv2_playTone_hz1 = inputToPython(block.inputs.HZ1, InputShape.Any);
           const mv2_playTone_hz2 = inputToPython(block.inputs.HZ2, InputShape.Any);
           const mv2_playTone_seconds = inputToPython(block.inputs.SECONDS, InputShape.Any);
-          // blockSource = `martypy.play_tone(${mv2_playTone_hz1},${mv2_playTone_hz2}, ${mv2_playTone_seconds}) # not implemented in python`;
+          // blockSource = `my_marty.play_tone(${mv2_playTone_hz1},${mv2_playTone_hz2}, ${mv2_playTone_seconds}) # not implemented in python`;
           blockSource = `# Play Note is not implemented in python yet`;
           break;
         case OpCode.mv2_stopSounds:
-          // blockSource = `martypy.stop_sound() # not implemented in python`;
+          // blockSource = `my_marty.stop_sound() # not implemented in python`;
           blockSource = `# Stop Sounds is not implemented in python`;
           break;
         case OpCode.mv2_playSound:
           const mv2_playSound_sound = inputToPython(block.inputs.SOUND_MENU, InputShape.Any);
-          // blockSource = `martypy.play_sound(${mv2_playSound_sound}) # not implemented in python`;
+          // blockSource = `my_marty.play_sound(${mv2_playSound_sound}) # not implemented in python`;
           blockSource = `# Play Sound not implemented in python`;
           break;
         case OpCode.mv2_changePitchEffect:
           const mv2_changePitchEffect_pitch = inputToPython(block.inputs.VALUE, InputShape.Any);
-          // blockSource = `martypy.change_pitch_effect(${mv2_changePitchEffect_pitch}) # not implemented in python`;
+          // blockSource = `my_marty.change_pitch_effect(${mv2_changePitchEffect_pitch}) # not implemented in python`;
           blockSource = `# Change Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_setPitchEffect:
           const mv2_setPitchEffect_pitch = inputToPython(block.inputs.VALUE, InputShape.Any);
-          // blockSource = `martypy.set_pitch_effect(${mv2_setPitchEffect_pitch}) # not implemented in python`;
+          // blockSource = `my_marty.set_pitch_effect(${mv2_setPitchEffect_pitch}) # not implemented in python`;
           blockSource = `# Change Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_clearSoundEffects:
-          // blockSource = `martypy.clear_sound_effects() # not implemented in python`;
+          // blockSource = `my_marty.clear_sound_effects() # not implemented in python`;
           blockSource = `# Clear Sound Effects is not implemented in python`;
           break;
         case OpCode.mv2_changeVolume:
           const mv2_changeVolume_volume = inputToPython(block.inputs.VOLUME, InputShape.Any);
-          // blockSource = `martypy.change_volume(${mv2_changeVolume_volume}) # not implemented in python`;
+          // blockSource = `my_marty.change_volume(${mv2_changeVolume_volume}) # not implemented in python`;
           blockSource = `# Change Volume is not implemented in python`;
           break;
         case OpCode.mv2_setVolume:
           const mv2_setVolume_volume = inputToPython(block.inputs.VOLUME, InputShape.Any);
-          // blockSource = `martypy.set_volume(${mv2_setVolume_volume}) # not implemented in python`;
+          // blockSource = `my_marty.set_volume(${mv2_setVolume_volume}) # not implemented in python`;
           blockSource = `# Set Volume is not implemented in python`;
           break;
         // Sensing
         case OpCode.XAxisMovement:
-          blockSource = `martypy.get_accelerometer("x")`;
+          blockSource = `my_marty.get_accelerometer("x")`;
           break;
         case OpCode.YAxisMovement:
-          blockSource = `martypy.get_accelerometer("y")`;
+          blockSource = `my_marty.get_accelerometer("y")`;
           break;
         case OpCode.ZAxisMovement:
-          blockSource = `martypy.get_accelerometer("z")`;
+          blockSource = `my_marty.get_accelerometer("z")`;
           break;
         case OpCode.BatteryPercentage:
-          blockSource = "martypy.get_battery_remaining()";
+          blockSource = "my_marty.get_battery_remaining()";
           break;
         case OpCode.ServoCurrent:
           const mv2_ServoCurrent_servo_choice = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
-          blockSource = `martypy.get_joint_current(${mv2_ServoCurrent_servo_choice})`;
+          blockSource = `my_marty.get_joint_current(${mv2_ServoCurrent_servo_choice})`;
           break;
         case OpCode.ServoPosition:
           const mv2_ServoPosition_servo_choice = ["left hip", "left twist", "left knee", "right hip", "right twist", "right knee", "left arm", "right arm", "eyes"][inputToPython(block.inputs.SERVOCHOICE, InputShape.Any)];
-          blockSource = `martypy.get_joint_position(${mv2_ServoPosition_servo_choice})`;
+          blockSource = `my_marty.get_joint_position(${mv2_ServoPosition_servo_choice})`;
           break;
         case OpCode.mv2_obstaclesense:
           const mv2_obstaclesense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.foot_obstacle_sensed(${mv2_obstaclesense_servo_choice})`;
+          blockSource = `my_marty.foot_obstacle_sensed(${mv2_obstaclesense_servo_choice})`;
           break;
         case OpCode.mv2_groundsense:
           const mv2_groundsense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.foot_on_ground(${mv2_groundsense_servo_choice})`;
+          blockSource = `my_marty.foot_on_ground(${mv2_groundsense_servo_choice})`;
           break;
         case OpCode.mv2_coloursense:
           const mv2_coloursense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.get_color_sensor_color(${mv2_coloursense_servo_choice})`;
+          blockSource = `my_marty.get_color_sensor_color(${mv2_coloursense_servo_choice})`;
           break;
         case OpCode.mv2_coloursense_hex:
           const mv2_coloursense_hex_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          blockSource = `martypy.get_color_sensor_hex(${mv2_coloursense_hex_servo_choice})`;
+          blockSource = `my_marty.get_color_sensor_hex(${mv2_coloursense_hex_servo_choice})`;
           break;
         case OpCode.mv2_coloursenseraw:
           const mv2_coloursenseraw_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
           const mv2_coloursenseraw_channel = inputToPython(block.inputs.SENSORCHANNEL, InputShape.Any);
-          blockSource = `martypy.get_color_sensor_value_by_channel(${mv2_coloursenseraw_servo_choice}, ${mv2_coloursenseraw_channel})`;
+          blockSource = `my_marty.get_color_sensor_value_by_channel(${mv2_coloursenseraw_servo_choice}, ${mv2_coloursenseraw_channel})`;
           break;
         case OpCode.mv2_distancesense:
-          blockSource = `martypy.get_distance_sensor()`;
+          blockSource = `my_marty.get_distance_sensor()`;
           break;
         case OpCode.mv2_lightsense:
           const mv2_lightsense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          // blockSource = `martypy.get_light_sensor(${mv2_lightsense_servo_choice}) # not implemented in python`;
+          // blockSource = `my_marty.get_light_sensor(${mv2_lightsense_servo_choice}) # not implemented in python`;
           blockSource = ` # Light Sensor is not implemented in python yet`;
           break;
         case OpCode.mv2_noisesense:
           const mv2_noisesense_servo_choice = inputToPython(block.inputs.SENSORCHOICE, InputShape.Any);
-          // blockSource = `martypy.get_noise_sensor(${mv2_noisesense_servo_choice}) # not implemented in python`;
+          // blockSource = `my_marty.get_noise_sensor(${mv2_noisesense_servo_choice}) # not implemented in python`;
           blockSource = `# Noise Sensor not implemented in python`;
           break;
         // Speak
         case OpCode.text2speech_marty_speakAndWait:
           const mv2_speak_text = inputToPython(block.inputs.WORDS, InputShape.Any);
-          blockSource = `martypy.speak(${mv2_speak_text})`;
+          blockSource = `my_marty.speak(${mv2_speak_text})`;
           break;
         default:
           satisfiesInputShape = InputShape.Any;
@@ -2143,8 +2143,23 @@ export default function toPython(
   // concatenate all the files together
   let fileContents = "";
   for (const filepath of Object.keys(files).sort()) {
+    if (files[filepath].trim() === "") {
+      continue;
+    }
     const fileTitle = filepath.split("/")[0];
     fileContents += `######## ${fileTitle} ########\n`;
+    fileContents += `
+import martypy
+
+# USB connection
+# change "COM1" on this next line to specify the USB port you want to use
+# comment this line out to use WiFi
+my_marty = martypy.Marty("USB")
+
+# WiFi connection
+# uncomment this and change the IP address to your Marty's to use WiFi
+# my_marty = martypy.Marty("wifi", "192.168.0.5")
+`
     fileContents += files[filepath] + "\n########\n\n";
   }
   return fileContents;
