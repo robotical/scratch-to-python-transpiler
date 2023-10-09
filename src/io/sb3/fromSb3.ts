@@ -269,6 +269,10 @@ function getBlockScript(blocks: { [key: string]: sb3.Block }) {
       for (const [fieldName, values] of Object.entries(fields)) {
         console.log("\nfieldName", fieldName)
         console.log("opcode", opcode)
+        if (!sb3.fieldTypeMap[opcode]) {
+          result[fieldName] = {type: "string", value: values[0] };
+          continue;
+        }
         const type = sb3.fieldTypeMap[opcode][fieldName];
         if (fieldName === "VARIABLE" || fieldName === "LIST") {
           result[fieldName] = { type, value: { id: values[1], name: values[0] } };
