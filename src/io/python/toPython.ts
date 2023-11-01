@@ -592,6 +592,20 @@ export default function toPython(
         }
       }
 
+      const getCorrectedBoard = (board: string) => {
+        try {
+          let parsedBoard = JSON.parse(board);
+          try {
+            parsedBoard = JSON.parse(parsedBoard);
+            return `"${parsedBoard.name}"`;
+          } catch {
+            return board;
+          }
+        } catch {
+          return board;
+        }
+      }
+
       const stage = "" + (target.isStage ? "" : "");
 
       let satisfiesInputShape: InputShape = null;
@@ -1844,17 +1858,21 @@ export default function toPython(
         // Looks
         case OpCode.mv2_discoChangeBlockPattern:
           const mv2_discoChangeBlockPattern_pattern = inputToPython(block.inputs.PATTERN, InputShape.Any);
-          const mv2_discoChangeBlockPattern_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          let mv2_discoChangeBlockPattern_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          mv2_discoChangeBlockPattern_board = getCorrectedBoard(mv2_discoChangeBlockPattern_board);
+          console.log("block.inputs", block.inputs)
           blockSource = `my_marty.disco_named_pattern(add_on=${mv2_discoChangeBlockPattern_board}, pattern=${mv2_discoChangeBlockPattern_pattern})`;
           break;
         case OpCode.mv2_LEDEyesColour:
-          const mv2_LEDEyesColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          let mv2_LEDEyesColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          mv2_LEDEyesColour_board = getCorrectedBoard(mv2_LEDEyesColour_board);
           const mv2_LEDEyesColour_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
           const mv2_LEDEyesColour_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_colour);
           blockSource = `my_marty.disco_color(color=${mv2_LEDEyesColour_colour_final}, add_on=${mv2_LEDEyesColour_board}, api='led')`;
           break;
         case OpCode.mv2_LEDEyesColour_SpecificLED:
-          const mv2_LEDEyesColour_SpecificLED_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          let mv2_LEDEyesColour_SpecificLED_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          mv2_LEDEyesColour_SpecificLED_board = getCorrectedBoard(mv2_LEDEyesColour_SpecificLED_board);
           const mv2_LEDEyesColour_SpecificLED_led_position = inputToPython(block.inputs.LED_POSITION, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_SpecificLED_colour)
@@ -1862,7 +1880,8 @@ export default function toPython(
           break;
         case OpCode.mv2_LEDEyesColourLEDs:
           const mv2_LEDEyesColourLEDs_colour = inputToPython(block.inputs.COLOUR, InputShape.Any);
-          const mv2_LEDEyesColourLEDs_board = inputToPython(block.inputs.SIDE, InputShape.Any);
+          let mv2_LEDEyesColourLEDs_board = inputToPython(block.inputs.SIDE, InputShape.Any);
+          mv2_LEDEyesColourLEDs_board = getCorrectedBoard(mv2_LEDEyesColourLEDs_board);
           let mv2_LEDEyesColourLEDs_colour_corrected;
           try {
             const parsedColours = JSON.parse(mv2_LEDEyesColourLEDs_colour);
@@ -1904,7 +1923,8 @@ export default function toPython(
           break;
         case OpCode.mv2_discoChangeRegionColour:
           const mv2_discoChangeRegionColour_colour = inputToPython(block.inputs.COLOR, InputShape.Any);
-          const mv2_discoChangeRegionColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          let mv2_discoChangeRegionColour_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          mv2_discoChangeRegionColour_board = getCorrectedBoard(mv2_discoChangeRegionColour_board);
           const mv2_discoChangeRegionColour_region = inputToPython(block.inputs.REGION, InputShape.Any);
           const mv2_discoChangeRegionColour_colour_final = objToRGBTupleHelper(mv2_discoChangeRegionColour_colour);
           blockSource = `my_marty.disco_color(region=${mv2_discoChangeRegionColour_region}, add_on=${mv2_discoChangeRegionColour_board}, color=${mv2_discoChangeRegionColour_colour_final}, api='led')`;
