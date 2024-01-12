@@ -592,6 +592,20 @@ export default function toPython(
         }
       }
 
+      const getCorrectedBoardWhoAmI = (board: string) => {
+        try {
+          let parsedBoard = JSON.parse(board);
+          try {
+            parsedBoard = JSON.parse(parsedBoard);
+            return `"${parsedBoard.whoAmI}"`;
+          } catch {
+            return board;
+          }
+        } catch {
+          return board;
+        }
+      }
+
       const getCorrectedBoard = (board: string) => {
         try {
           let parsedBoard = JSON.parse(board);
@@ -1872,11 +1886,12 @@ export default function toPython(
           break;
         case OpCode.mv2_LEDEyesColour_SpecificLED:
           let mv2_LEDEyesColour_SpecificLED_board = inputToPython(block.inputs.BOARDTYPE, InputShape.Any);
+          const mv2_LEDEyesColour_SpecificLED_board_whoAmI = getCorrectedBoardWhoAmI(mv2_LEDEyesColour_SpecificLED_board);
           mv2_LEDEyesColour_SpecificLED_board = getCorrectedBoard(mv2_LEDEyesColour_SpecificLED_board);
           const mv2_LEDEyesColour_SpecificLED_led_position = inputToPython(block.inputs.LED_POSITION, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour = inputToPython(block.inputs.COLOUR_LED_EYES, InputShape.Any);
           const mv2_LEDEyesColour_SpecificLED_colour_final = objToRGBTupleHelper(mv2_LEDEyesColour_SpecificLED_colour)
-          blockSource = `my_marty.disco_color_specific_led(color=${mv2_LEDEyesColour_SpecificLED_colour_final}, add_on=${mv2_LEDEyesColour_SpecificLED_board}, led_id=${mv2_LEDEyesColour_SpecificLED_led_position})`;
+          blockSource = `my_marty.disco_color_specific_led(color=${mv2_LEDEyesColour_SpecificLED_colour_final}, add_on=${mv2_LEDEyesColour_SpecificLED_board}, add_on_who_am_i=${mv2_LEDEyesColour_SpecificLED_board_whoAmI}, led_id=${mv2_LEDEyesColour_SpecificLED_led_position})`;
           break;
         case OpCode.mv2_LEDEyesColourLEDs:
           const mv2_LEDEyesColourLEDs_colour = inputToPython(block.inputs.COLOUR, InputShape.Any);
