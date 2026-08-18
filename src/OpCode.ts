@@ -267,6 +267,10 @@ export enum OpCode {
   mv2_walk_bw = "mv2_walk_bw",
   mv2_walk = "mv2_walk",
   mv2_wiggle = "mv2_wiggle",
+  mv2_moveLeg = "mv2_moveLeg",
+  mv2_stop = "mv2_stop",
+  mv2_pause = "mv2_pause",
+  mv2_resume = "mv2_resume",
   // Looks
   mv2_discoChangeBlockPattern = "mv2_discoChangeBlockPattern",
   mv2_LEDEyesColour = "mv2_LEDEyesColour",
@@ -279,6 +283,8 @@ export enum OpCode {
   mv2_discoChangeBackColour = "mv2_discoChangeBackColour",
   mv2_discoSetBreatheBackColour = "mv2_discoSetBreatheBackColour",
   mv2_discoTurnOffBackColour = "mv2_discoTurnOffBackColour",
+  mv2_turnAllLEDsOff = "mv2_turnAllLEDsOff",
+  nearest_note = "nearest_note",
   // Sound
   mv2_playNote = "mv2_playNote",
   mv2_changePitchEffect = "mv2_changePitchEffect",
@@ -318,7 +324,14 @@ export enum OpCode {
   XAxisMovement = "XAxisMovement",
   YAxisMovement = "YAxisMovement",
   ZAxisMovement = "ZAxisMovement",
+  XAxisMagnetometer = "XAxisMagnetometer",
+  YAxisMagnetometer = "YAxisMagnetometer",
+  ZAxisMagnetometer = "ZAxisMagnetometer",
   BatteryPercentage = "BatteryPercentage",
   mv2_distancesense = "mv2_distancesense",
+  mv2_onObjectSense = "mv2_onObjectSense",
+  mv2_onLightSense = "mv2_onLightSense",
+  mv2_onNoiseSense = "mv2_onNoiseSense",
+  mv2_onColourSense = "mv2_onColourSense",
   text2speech_marty_speakAndWait = "text2speech_marty_speakAndWait"
 }

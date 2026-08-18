@@ -76,7 +76,11 @@ export class BlockBase<MyOpCode extends OpCode, MyInputs extends { [key: string]
       OpCode.event_whengreaterthan,
       OpCode.event_whenbroadcastreceived,
       OpCode.control_start_as_clone,
-      OpCode.procedures_definition
+      OpCode.procedures_definition,
+      OpCode.mv2_onObjectSense,
+      OpCode.mv2_onLightSense,
+      OpCode.mv2_onNoiseSense,
+      OpCode.mv2_onColourSense
     ];
     return hatTypes.includes(this.opcode);
   }

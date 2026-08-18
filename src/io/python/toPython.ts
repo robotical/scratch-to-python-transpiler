@@ -10,6 +10,7 @@ import { OpCode } from "../../OpCode";
 
 import Target from "../../Target";
 import { List, Variable } from "../../Data";
+import martyBlockToPython, { MartyPythonInputShape } from "./martyBlocks";
 const NOT_IMPLEMENTED_YET = "# This block is not implemented yet.";
 const INDENTATION_RESET_CODE = "%^&*()";
 /**
@@ -235,23 +236,32 @@ export default function toPython(
   let targetNameMap = {};
   let customBlockArgNameMap: Map<Script, { [key: string]: string }> = new Map();
   let variableNameMap: { [id: string]: string } = {}; // ID to unique (Leopard) name
+  const martyEventScripts: Array<{ condition: string; body: string }> = [];
+  // Generated Python is one flat module, so data names must be unique across
+  // the stage and every sprite (and must not shadow its runtime helpers).
+  const uniqueVariableName = uniqueNameGenerator([
+    ...PYTHON_RESERVED_WORDS,
+    "martypy",
+    "time",
+    "my_marty"
+  ]);
+  for (const target of [project.stage, ...project.sprites]) {
+    for (const { id, name } of [...target.lists, ...target.variables]) {
+      variableNameMap[id] = uniqueVariableName(snake_case(name));
+    }
+  }
+  const uniqueProcedureName = uniqueNameGenerator([
+    ...PYTHON_RESERVED_WORDS,
+    "martypy",
+    "time",
+    "my_marty",
+    ...Object.values(variableNameMap)
+  ]);
 
   for (const target of [project.stage, ...project.sprites]) {
     const newTargetName = uniqueSpriteName(snake_case(target.name, true));
     targetNameMap[target.name] = newTargetName;
     target.setName(newTargetName);
-
-    // Variables are uniquely named per-target. These are on an empty namespace
-    // so don't have any conflicts.
-    //
-    // Note: since variables are serialized as properties on an object (this.vars),
-    // these never conflict with reserved Python words like "class" or "new".
-    let uniqueVariableName = uniqueNameGenerator();
-
-    for (const { id, name } of [...target.lists, ...target.variables]) {
-      const newName = uniqueVariableName(snake_case(name));
-      variableNameMap[id] = newName;
-    }
 
     // Scripts are uniquely named per-target. These are on the sprite's main
     // namespace, so must not conflict with properties and methods defined on
@@ -369,13 +379,19 @@ export default function toPython(
 
     for (const script of target.scripts) {
       script.setName(uniqueScriptName(snake_case(script.name)));
+      if (script.hat && script.hat.opcode === OpCode.procedures_definition) {
+        script.setName(uniqueProcedureName(script.name));
+      }
 
       const argNameMap = {};
       customBlockArgNameMap.set(script, argNameMap);
 
       // Parameter names aren't defined on a namespace at all, so must not conflict
       // with Python reserved words.
-      const uniqueParamName = uniqueNameGenerator(PYTHON_RESERVED_WORDS);
+      const uniqueParamName = uniqueNameGenerator([
+        ...PYTHON_RESERVED_WORDS,
+        ...Object.values(variableNameMap)
+      ]);
 
       for (const block of script.blocks) {
         if (block.opcode === OpCode.procedures_definition) {
@@ -478,14 +494,41 @@ export default function toPython(
 
   function scriptToPython(script: Script, target: Target): string {
     const body = script.body.map(block => blockToPythonWithContext(block, target, script)).join("\n");
+    if (script.hat) {
+      const hatInput = (name: string): string => {
+        const input = script.hat.inputs[name] as BlockInput.Any;
+        return input === undefined ? "None" : JSON.stringify(input.value);
+      };
+      let condition: string = null;
+      switch (script.hat.opcode) {
+        case OpCode.mv2_onObjectSense:
+          condition = `my_marty.object_sensed(${hatInput("SENSORCHOICE")})`;
+          break;
+        case OpCode.mv2_onLightSense:
+          condition = "my_marty.light_sensed()";
+          break;
+        case OpCode.mv2_onNoiseSense:
+          condition = "my_marty.noise_sensed()";
+          break;
+        case OpCode.mv2_onColourSense:
+          condition = `my_marty.colour_sensed(${hatInput("COLOUR")})`;
+          break;
+      }
+      if (condition !== null) {
+        martyEventScripts.push({ condition, body: formatPythonIndentation(body).trim() });
+        return "";
+      }
+    }
     if (script.hat && script.hat.opcode === OpCode.procedures_definition) {
+      const parameters = script.hat.inputs.ARGUMENTS.value
+        .filter(arg => arg.type !== "label")
+        .map(arg => arg.name)
+        .join(", ");
+      const globalDataNames = Object.values(variableNameMap);
+      const globalDeclaration = globalDataNames.length > 0 ? `global ${globalDataNames.join(", ")}\n` : "";
       return `
-        * ${script.name}(${script.hat.inputs.ARGUMENTS.value
-          .filter(arg => arg.type !== "label")
-          .map(arg => arg.name)
-          .join(", ")}) {
-          ${body}
-        }
+        def ${script.name}(${parameters}):
+          ${globalDeclaration}${body || "pass"}
       `;
     }
     return `
@@ -553,7 +596,7 @@ export default function toPython(
       // undefined inputs with the value `null`. In theory, this should
       // eventually be removed when the sb3 import script is improved.
       if (input === undefined) {
-        return "NoneType";
+        return "None";
       }
 
       switch (input.type) {
@@ -591,6 +634,12 @@ export default function toPython(
           selectedWatcherSource = `${newName}`;
         }
       }
+
+      const martySource = martyBlockToPython(
+        block,
+        (input, shape: MartyPythonInputShape) => inputToPython(input, shape as InputShape)
+      );
+      if (martySource !== null) return martySource;
 
       const getCorrectedBoardWhoAmI = (board: string) => {
         try {
@@ -1642,22 +1691,26 @@ export default function toPython(
           satisfiesInputShape = InputShape.Stack;
 
           // Get name of custom block script with given PROCCODE:
-          const procName = target.scripts.find(
+          const procedureScript = target.scripts.find(
             script =>
               script.hat !== null &&
               script.hat.opcode === OpCode.procedures_definition &&
               script.hat.inputs.PROCCODE.value === block.inputs.PROCCODE.value
-          ).name;
+          );
+          if (!procedureScript) {
+            blockSource = `raise RuntimeError(${JSON.stringify(
+              `My Block definition not found: ${block.inputs.PROCCODE.value}`
+            )})`;
+            break;
+          }
+          const procName = procedureScript.name;
 
           // TODO: Boolean inputs should provide appropriate desiredInputShape instead of "any"
           const procArgs = `${block.inputs.INPUTS.value.map(input => inputToPython(input, InputShape.Any)).join(", ")}`;
 
-          // Warp-mode procedures execute all child procedures in warp mode as well
-          if (warp) {
-            blockSource = `my_marty.warp(this.${procName})(${procArgs})`;
-          } else {
-            blockSource = `my_marty.${procName}(${procArgs})`;
-          }
+          // Python functions are synchronous by default. Scratch's warp flag
+          // therefore needs no special call wrapper here.
+          blockSource = `${procName}(${procArgs})`;
           break;
         }
 
@@ -1675,7 +1728,7 @@ export default function toPython(
           } else {
             satisfiesInputShape = InputShape.Any;
           }
-          blockSource = customBlockArgNameMap.get(script)[block.inputs.VALUE.value];
+          blockSource = customBlockArgNameMap.get(script)[block.inputs.VALUE.value] || "0";
           break;
 
         case OpCode.pen_clear:
@@ -2163,7 +2216,14 @@ export default function toPython(
         }
       }
     }
-    files[`${target.name}/${target.name}.py`] = `${arrangeScriptsBasedOnVerticalAlignment(target.scripts)
+    const arrangedScripts = arrangeScriptsBasedOnVerticalAlignment(target.scripts);
+    const procedureScripts = arrangedScripts.filter(
+      script => script.hat && script.hat.opcode === OpCode.procedures_definition
+    );
+    const runnableScripts = arrangedScripts.filter(
+      script => !script.hat || script.hat.opcode !== OpCode.procedures_definition
+    );
+    files[`${target.name}/${target.name}.py`] = `${[...procedureScripts, ...runnableScripts]
       // .filter(script => script.hat !== null)
       .map(script => scriptToPython(script, target))
       .map(stringifiedScript => formatPythonIndentation(stringifiedScript))
@@ -2175,16 +2235,17 @@ export default function toPython(
     // files[filepath] = prettier.format(files[filepath], { ...prettierConfig, filepath });
   });
 
-  // concatenate all the files together
-  let fileContents = "";
-  for (const filepath of Object.keys(files).sort()) {
-    if (files[filepath].trim() === "") {
-      continue;
-    }
-    const fileTitle = filepath.split("/")[0];
-    fileContents += `######## ${fileTitle} ########\n`;
-    fileContents += `
+  const populatedFiles = Object.keys(files)
+    .sort()
+    .filter(filepath => files[filepath].trim() !== "");
+  if (populatedFiles.length === 0 && martyEventScripts.length === 0) return "";
+
+  // The browser runner strips the desktop connection line and supplies its
+  // own compatibility class. Keeping this preamble once makes the displayed
+  // source valid for both desktop martypy and in-app execution.
+  let fileContents = `
 import martypy
+import time
 
 # USB connection
 # change "COM1" on this next line to specify the USB port you want to use
@@ -2194,8 +2255,45 @@ my_marty = martypy.Marty("USB")
 # WiFi connection
 # uncomment this and change the IP address to your Marty's to use WiFi
 # my_marty = martypy.Marty("wifi", "192.168.0.5")
-`
+`;
+  const dataInitializers: string[] = [];
+  for (const target of [project.stage, ...project.sprites]) {
+    for (const variable of target.variables) {
+      dataInitializers.push(
+        `${variableNameMap[variable.id]} = ${toOptimalPythonRepresentation(variable.value)}`
+      );
+    }
+    for (const list of target.lists) {
+      dataInitializers.push(
+        `${variableNameMap[list.id]} = ${toOptimalPythonRepresentation(list.value)}`
+      );
+    }
+  }
+  if (dataInitializers.length > 0) {
+    fileContents += `\n# Scratch variables and lists\n${dataInitializers.join("\n")}\n`;
+  }
+  for (const filepath of populatedFiles) {
+    const fileTitle = filepath.split("/")[0];
+    fileContents += `\n######## ${fileTitle} ########\n`;
     fileContents += files[filepath] + "\n########\n\n";
+  }
+  if (martyEventScripts.length > 0) {
+    fileContents += "\n######## Marty sensor events ########\n";
+    martyEventScripts.forEach((_, index) => {
+      fileContents += `_marty_event_${index}_was_active = False\n`;
+    });
+    fileContents += "while True:\n";
+    martyEventScripts.forEach((event, index) => {
+      fileContents += `    _marty_event_${index}_is_active = bool(${event.condition})\n`;
+      fileContents += `    if _marty_event_${index}_is_active and not _marty_event_${index}_was_active:\n`;
+      if (event.body) {
+        fileContents += event.body.split("\n").map(line => `        ${line}`).join("\n") + "\n";
+      } else {
+        fileContents += "        pass\n";
+      }
+      fileContents += `    _marty_event_${index}_was_active = _marty_event_${index}_is_active\n`;
+    });
+    fileContents += "    time.sleep(0.05)\n";
   }
   return fileContents;
 }

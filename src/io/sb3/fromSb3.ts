@@ -267,8 +267,6 @@ function getBlockScript(blocks: { [key: string]: sb3.Block }) {
     function translateFields(fields: sb3.Block["fields"], opcode: OpCode): Block["inputs"] {
       let result = {};
       for (const [fieldName, values] of Object.entries(fields)) {
-        console.log("\nfieldName", fieldName)
-        console.log("opcode", opcode)
         if (!sb3.fieldTypeMap[opcode]) {
           result[fieldName] = {type: "string", value: values[0] };
           continue;
