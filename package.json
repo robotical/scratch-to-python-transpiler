@@ -4,7 +4,7 @@
   "description": "Transpile Scratch project files to python code",
   "repository": {
     "type": "git",
-    "url": "https://github.com/robotical/scratch-to-python-transpiler.git"
+    "url": "https://github.com/robotical/scratch-to-python-transpiler"
   },
   "license": "ISC",
   "publishConfig": {
