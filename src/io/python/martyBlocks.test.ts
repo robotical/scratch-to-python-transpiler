@@ -48,10 +48,15 @@ const commonInputs: { [name: string]: BlockInput.Any } = {
   VOLUME: numberInput(80),
   SENSORCHOICE: stringInput("LeftColorSensor"),
   SENSORCHANNEL: stringInput("Red"),
-  WORDS: stringInput("hello")
+  WORDS: stringInput("hello"),
+  VOICE: stringInput("FEMALE"),
+  SPEED: numberInput(1.5),
+  LANGUAGE: stringInput("fr"),
+  CODE: stringInput("my_marty.get_ready()\nprint(\"ready\")")
 };
 
 const martyOpcodes: OpCode[] = [
+  OpCode.mv2_pythonCode,
   OpCode.mv2_getReady,
   OpCode.mv2_walk_fw,
   OpCode.mv2_walk_bw,
@@ -121,7 +126,13 @@ const martyOpcodes: OpCode[] = [
   OpCode.mv2_onLightSense,
   OpCode.mv2_onNoiseSense,
   OpCode.mv2_onColourSense,
-  OpCode.text2speech_marty_speakAndWait
+  OpCode.text2speech_marty_speakAndWait,
+  OpCode.text2speech_speakAndWait,
+  OpCode.text2speech_setVoice,
+  OpCode.text2speech_setVoiceSpeed,
+  OpCode.text2speech_setLanguage,
+  OpCode.translate_getTranslate,
+  OpCode.translate_getViewerLanguage
 ];
 
 const createBlock = (opcode: OpCode): Block => new BlockBase({
@@ -138,6 +149,24 @@ const inputToPython = (input: BlockInput.Any, shape: MartyPythonInputShape): str
 };
 
 describe("Marty Python generation", () => {
+  test.each([
+    [OpCode.text2speech_speakAndWait, 'my_marty.speak_on_computer("hello")'],
+    [OpCode.text2speech_setVoice, 'my_marty.set_voice("FEMALE")'],
+    [OpCode.text2speech_setVoiceSpeed, 'my_marty.set_voice_speed(1.5)'],
+    [OpCode.text2speech_setLanguage, 'my_marty.set_speech_language("fr")'],
+    [OpCode.translate_getTranslate, 'my_marty.translate("hello", "fr")'],
+    [OpCode.translate_getViewerLanguage, 'my_marty.get_language()']
+  ])("maps extension opcode %s to its MartyPy API", (opcode, expected) => {
+    expect(martyBlockToPython(createBlock(opcode as OpCode), inputToPython)).toBe(expected);
+  });
+
+  test("preserves flattened Speak/Translate dropdown shadows", () => {
+    const voice = new BlockBase({opcode: OpCode.text2speech_setVoice, inputs: {voices: stringInput("MALE")}}) as Block;
+    const speed = new BlockBase({opcode: OpCode.text2speech_setVoiceSpeed, inputs: {speeds: numberInput(1.5)}}) as Block;
+    expect(martyBlockToPython(voice, inputToPython)).toBe('my_marty.set_voice("MALE")');
+    expect(martyBlockToPython(speed, inputToPython)).toBe('my_marty.set_voice_speed(1.5)');
+  });
+
   test.each(martyOpcodes)("translates %s", opcode => {
     expect(martyBlockToPython(createBlock(opcode), inputToPython)).not.toBeNull();
   });
@@ -147,6 +176,11 @@ describe("Marty Python generation", () => {
       .toBe("my_marty.rgb_operator(10, 20, 30)");
     expect(martyBlockToPython(createBlock(OpCode.ServoCurrent), inputToPython))
       .toBe('my_marty.get_joint_current("left hip")');
+  });
+
+  test("preserves multiline embedded Python source verbatim", () => {
+    expect(martyBlockToPython(createBlock(OpCode.mv2_pythonCode), inputToPython))
+      .toBe('my_marty.get_ready()\nprint("ready")');
   });
 
   test("preserves runtime expressions instead of evaluating them during translation", () => {

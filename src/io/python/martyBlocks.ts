@@ -102,12 +102,17 @@ const secondsToMilliseconds = (input: BlockInput.Any, inputToPython: MartyInputT
  * legacy Scratch translator can handle them.
  */
 export default function martyBlockToPython(block: Block, inputToPython: MartyInputToPython): string | null {
-  const input = (name: string): BlockInput.Any => block.inputs[name] as BlockInput.Any;
+  const input = (name: string): BlockInput.Any =>
+    (block.inputs[name] || block.inputs[`${name.toLowerCase()}s`]) as BlockInput.Any;
   const number = (name: string): string => inputToPython(input(name), "number");
   const any = (name: string): string => inputToPython(input(name), "any");
   const string = (name: string): string => inputToPython(input(name), "string");
 
   switch (block.opcode) {
+    case OpCode.mv2_pythonCode: {
+      const source = staticValue(input("CODE"));
+      return source === undefined || source === null ? "" : String(source);
+    }
     // Motion
     case OpCode.mv2_getReady:
       return "my_marty.get_ready()";
@@ -276,7 +281,19 @@ export default function martyBlockToPython(block: Block, inputToPython: MartyInp
       return "";
 
     case OpCode.text2speech_marty_speakAndWait:
-      return `my_marty.speak(${any("WORDS")}, blocking=True)`;
+      return `my_marty.speak(${string("WORDS")}, blocking=True)`;
+    case OpCode.text2speech_speakAndWait:
+      return `my_marty.speak_on_computer(${string("WORDS")})`;
+    case OpCode.text2speech_setVoice:
+      return `my_marty.set_voice(${string("VOICE")})`;
+    case OpCode.text2speech_setVoiceSpeed:
+      return `my_marty.set_voice_speed(${number("SPEED")})`;
+    case OpCode.text2speech_setLanguage:
+      return `my_marty.set_speech_language(${string("LANGUAGE")})`;
+    case OpCode.translate_getTranslate:
+      return `my_marty.translate(${string("WORDS")}, ${string("LANGUAGE")})`;
+    case OpCode.translate_getViewerLanguage:
+      return "my_marty.get_language()";
     default:
       return null;
   }

@@ -186,6 +186,7 @@ export const fieldTypeMap: {
     [fieldName: string]: _BlockInput.Any["type"];
   };
 } = {
+  [OpCode.mv2_pythonCode]: { CODE: "string" },
   [OpCode.motion_setrotationstyle]: { STYLE: "rotationStyle" },
   [OpCode.motion_pointtowards_menu]: { TOWARDS: "pointTowardsTarget" },
   [OpCode.motion_glideto_menu]: { TO: "goToTarget" },

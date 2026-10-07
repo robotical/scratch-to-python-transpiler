@@ -246,6 +246,7 @@ export enum OpCode {
   // * MARTY *
   // *********
   // Motion
+  mv2_pythonCode = "mv2_pythonCode",
   mv2_circle = "mv2_circle",
   mv2_eyes = "mv2_eyes",
   mv2_kick = "mv2_kick",
@@ -333,5 +334,11 @@ export enum OpCode {
   mv2_onLightSense = "mv2_onLightSense",
   mv2_onNoiseSense = "mv2_onNoiseSense",
   mv2_onColourSense = "mv2_onColourSense",
-  text2speech_marty_speakAndWait = "text2speech_marty_speakAndWait"
+  text2speech_marty_speakAndWait = "text2speech_marty_speakAndWait",
+  text2speech_speakAndWait = "text2speech_speakAndWait",
+  text2speech_setVoice = "text2speech_setVoice",
+  text2speech_setVoiceSpeed = "text2speech_setVoiceSpeed",
+  text2speech_setLanguage = "text2speech_setLanguage",
+  translate_getTranslate = "translate_getTranslate",
+  translate_getViewerLanguage = "translate_getViewerLanguage"
 }
